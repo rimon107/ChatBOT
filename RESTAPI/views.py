@@ -13,6 +13,7 @@ def GetResponseResult(request):
     query = ""
     query = request.POST.get('query', '')
     # gs = goslate.Goslate()
+    #Google Translate API Library
     translator = Translator()
 
 
