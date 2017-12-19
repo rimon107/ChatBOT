@@ -1,15 +1,17 @@
 from django.http import JsonResponse
 from .CustomLibrary.Response import ChatBotResponse
-from RESTAPI.ChatBotLibrary import TestChatBot
+from RESTAPI.ChatBotLibrary import ChatBot
 from django.views.decorators.csrf import csrf_exempt
 from RESTAPI.ChatBotLibrary import weatherApi
 from geotext import GeoText
 # import goslate
 from googletrans import Translator
+from ipware.ip import get_ip
 
 
 @csrf_exempt
 def GetResponseResult(request):
+    message = ""
     query = ""
     query = request.POST.get('query', '')
     # gs = goslate.Goslate()
@@ -20,38 +22,37 @@ def GetResponseResult(request):
     if query == "" or query is None:
         query = request.GET.get('query', '')
 
+    print(query)
     try:
-
         # lang = gs.detect(query)
         lang = translator.detect(query).lang
         if lang == 'bn':
             # message = gs.translate(query, 'en')
-            message = translator.translate(query, dest='en').text
-        if lang == 'en':
+            transMessage = translator.translate(query, dest='en').text
+            print(transMessage)
+            response = ChatBot.response(transMessage)
+            print(response)
+            message = translator.translate(response, dest='bn').text
+        else:
             query = query.lower()
 
             print(query)
             # if find_words('WEATHER', query):
             if 'weather' in query:
-                print("in ")
-                # places = GeoText(query)
-                # print(places)
-                # place = places.cities[0]
-                # print(place)
+
                 places = query.replace('weather', '').split(" ")
                 print(places)
                 if places.__len__() == 1 and places[0] == "":
                     places.append('Dhaka')
-                print(places)
+
                 des = ''
                 for plc in places:
                     cap_plc = plc.title()
                     place = GeoText(cap_plc)
-                    print(place)
-                    print( place.cities.__len__())
+
                     if place.cities.__len__() == 1:
                         des = place.cities[0]
-                        print(des)
+
                         url = weatherApi.url_builder(des)
                         raw_data = weatherApi.data_fetch(url)
                         if raw_data is not None:
@@ -59,17 +60,18 @@ def GetResponseResult(request):
 
                 url = weatherApi.url_builder(des)
                 raw_data = weatherApi.data_fetch(url)
-                print(raw_data)
+
                 data_org = weatherApi.data_organizer(raw_data)
-                print(data_org)
+
                 message = weatherApi.data_output(data_org)
-                print("message")
-                print(message)
+
             # message = ChatBotResponse.BotResponse(query)
             else:
-                print("out")
-                message = TestChatBot.response(query)
+                message = ChatBot.response(query)
+
         status = "success"
+        print(message)
+        print(status)
     except :
         message = ""
         status = "fail"

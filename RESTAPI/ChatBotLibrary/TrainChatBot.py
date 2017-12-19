@@ -9,7 +9,9 @@ import tflearn
 import tensorflow as tf
 import random
 import json
-import pymssql
+import os
+
+
 # import our chat-bot intents file
 
 #conn = pymssql.connect(host='192.168.100.139', user='sa', password='dataport', database='Sentiment')
@@ -25,8 +27,13 @@ import pymssql
 #print("testt")
 #print(testt)
 
+trainingDatafileName = 'intents.json'
 
-with open('intents.json') as json_data:
+path = os.getcwd() + '\\RESTAPI\\ChatBotLibrary\\'
+
+intentFile = path + trainingDatafileName
+
+with open(intentFile) as json_data:
     intents = json.load(json_data)
     print("intents")
     print(intents)
@@ -108,15 +115,24 @@ net = tflearn.fully_connected(net, 8)
 net = tflearn.fully_connected(net, len(train_y[0]), activation='softmax')
 net = tflearn.regression(net)
 
+modelFileName = 'tflearn_logs'
+
+modelFile = path + modelFileName
+
+tfModelFileName = 'model.tflearn'
+
+tfModelFile = path + tfModelFileName
+
 # Define model and setup tensorboard
-model = tflearn.DNN(net, tensorboard_dir='tflearn_logs')
+model = tflearn.DNN(net, tensorboard_dir=modelFile)
 # Start training (apply gradient descent algorithm)
 model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
-model.save('model.tflearn')
+model.save(tfModelFile)
 
-
+trainingDatafileName = 'training_data'
+trainingDatafile = path + trainingDatafileName
 
 
 # save all of our data structures
 import pickle
-pickle.dump( {'words':words, 'classes':classes, 'train_x':train_x, 'train_y':train_y}, open( "training_data", "wb" ) )
+pickle.dump( {'words':words, 'classes':classes, 'train_x':train_x, 'train_y':train_y}, open( trainingDatafile, "wb" ) )
