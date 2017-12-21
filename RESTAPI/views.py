@@ -10,6 +10,22 @@ from ipware.ip import get_ip
 import re
 import pymssql
 
+
+m = {
+    'jan': 1,
+    'feb': 2,
+    'mar': 3,
+    'apr': 4,
+    'may': 5,
+    'jun': 6,
+    'jul': 7,
+    'aug': 8,
+    'sep': 9,
+    'oct': 10,
+    'nov': 11,
+    'dec': 12
+}
+
 @csrf_exempt
 def GetResponseResult(request):
     message = ""
@@ -87,6 +103,15 @@ def GetResponseResult(request):
     }
     return JsonResponse(data,safe=False)
 
+def isInt(value):
+    try:
+        int(value)
+        return True
+    except:
+        return False
+
+def parseIntegers(mixedList):
+    return [x for x in mixedList if (isInt(x))]
 
 def find_words(text, search):
     """Find exact words"""
@@ -105,21 +130,34 @@ def find_words(text, search):
     else:
         return False
 
+
+
 def SalesInfo(query):
     # context = {}
     queryList = re.findall(r'\w+', query)
-    select = 'BusinessName'
-    group = 'BusinessName'
+    status = False
+    month = 0
+    res = ''
+    if queryList.__len__() == 1:
+        status, res = SalesOnly(query)
+    else:
+        for q in queryList:
+            print(q)
+            status, month = month_string_to_number(q)
+            if status == True:
+                print(month)
+                status, res = SalesInPeriod(queryList)
+                break
 
-    context = {
-        'select':select,
-        'group':group
-    }
+        if status == False:
+            yearList = parseIntegers(queryList)
+            if yearList.__len__() != 0:
+                print("1")
+                status, res = SalesInPeriod(queryList)
 
-    status , res = GetResultFromDatabase(context, False, True)
 
     print(status)
-    print(res)
+
 
     if status:
         result = str(res)
@@ -127,16 +165,120 @@ def SalesInfo(query):
         result = res
     return result
 
+def month_string_to_number(string):
+    m = {
+        'jan': 1,
+        'feb': 2,
+        'mar': 3,
+        'apr':4,
+         'may':5,
+         'jun':6,
+         'jul':7,
+         'aug':8,
+         'sep':9,
+         'oct':10,
+         'nov':11,
+         'dec':12
+        }
+    s = string.strip()[:3].lower()
+
+    try:
+        out = m[s]
+        return True, out
+    except:
+        return False, 0
+
+def SalesOnly(query):
+    tag = 'NSI'
+    select = ' Sum(NSI) NSI '
+    condition = " currentPeriod = 'Current Month'"
+
+    context = {
+        'tag': tag,
+        'select': select,
+        'condition': condition
+    }
+
+    status, res = GetResultFromDatabase(context, True, False)
+    if status:
+        result = str(res[0])
+    else:
+        result = res
+
+    return status, result
+
+def SalesInPeriod(query):
+    print(query)
+    yearList = parseIntegers(query)
+
+    tag = 'NSI'
+    status = False
+    month = 0
+    for q in query:
+        status, month = month_string_to_number(q)
+        if status == True:
+            break
+
+    import datetime
+    today = datetime.datetime.now()
+
+    if yearList.__len__() != 0:
+        year = yearList[0]
+    else:
+        year = today.year
+
+
+    if status == False:
+        month = today.month
+        print(today.year)
+        if str(today.year) == str(year):
+            status, res = SalesOnly(query)
+            return status,res
+
+    print(month)
+    if month < 10:
+        period = str(year) + '0' + str(month)
+    else:
+        period = str(year) +  str(month)
+
+    select = ' Sum(NSI) NSI '
+    condition = " currentPeriod = '"+ period + "'"
+
+    context = {
+        'tag': tag,
+        'select': select,
+        'condition': condition
+    }
+
+    status, res = GetResultFromDatabase(context, True, False)
+    if status:
+        result = str(res[0])
+    else:
+        result = res
+
+    return status, result
+
+def getBusiness(query):
+    select = 'BusinessName'
+    group = 'BusinessName'
+
+    context = {
+        'select': select,
+        'group': group
+    }
+
+    status, res = GetResultFromDatabase(context, False, True)
+
 
 def GetResultFromDatabase(context, condition=False, group=False ):
 
     select = context['select']
-
+    tag = context['tag']
     database = " [dbo].[SalesInfo] "
 
     sql = "SELECT  "+select+ " FROM "+ database # + " WHERE " + + "patterns = '" + text + "'"
 
-    sql += "WHERE "+ context['condition'] if condition==True else " "
+    sql += "WHERE "+ context['condition']  if condition==True else " "
 
     sql += "GROUP BY " + context['group'] if group == True else " "
 
@@ -156,8 +298,11 @@ def GetResultFromDatabase(context, condition=False, group=False ):
             for row in dataset
         ]
 
+        res = []
+
         try:
-            response = results[1][select]
+            response = [ res.append( results[i][tag]) for i in  range(dataset.__len__())]
+            response = res
         except Exception:
             response = ""
 
