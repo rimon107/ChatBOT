@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .CustomLibrary.Response import ChatBotResponse
+from .CustomLibrary import Response
 from RESTAPI.ChatBotLibrary import ChatBot
 from django.views.decorators.csrf import csrf_exempt
 from RESTAPI.ChatBotLibrary import weatherApi
@@ -7,7 +7,8 @@ from geotext import GeoText
 # import goslate
 from googletrans import Translator
 from ipware.ip import get_ip
-
+import re
+import pymssql
 
 @csrf_exempt
 def GetResponseResult(request):
@@ -38,7 +39,11 @@ def GetResponseResult(request):
 
             print(query)
             # if find_words('WEATHER', query):
-            if 'weather' in query:
+
+            if 'sale' in query:
+                message = SalesInfo(query)
+
+            elif 'weather' in query:
 
                 places = query.replace('weather', '').split(" ")
                 print(places)
@@ -99,3 +104,67 @@ def find_words(text, search):
         return True
     else:
         return False
+
+def SalesInfo(query):
+    # context = {}
+    queryList = re.findall(r'\w+', query)
+    select = 'BusinessName'
+    group = 'BusinessName'
+
+    context = {
+        'select':select,
+        'group':group
+    }
+
+    status , res = GetResultFromDatabase(context, False, True)
+
+    print(status)
+    print(res)
+
+    if status:
+        result = str(res)
+    else:
+        result = res
+    return result
+
+
+def GetResultFromDatabase(context, condition=False, group=False ):
+
+    select = context['select']
+
+    database = " [dbo].[SalesInfo] "
+
+    sql = "SELECT  "+select+ " FROM "+ database # + " WHERE " + + "patterns = '" + text + "'"
+
+    sql += "WHERE "+ context['condition'] if condition==True else " "
+
+    sql += "GROUP BY " + context['group'] if group == True else " "
+
+    print(sql)
+    try:
+        conn = pymssql.connect(host='MIS-RIMON', user='sa', password='dataport', database='ChatBot')
+        cursor = conn.cursor()
+
+        cursor.execute(sql)
+
+        dataset = cursor.fetchall()
+
+        columns = [col[0] for col in cursor.description]
+
+        results = [
+            dict(zip(columns, row))
+            for row in dataset
+        ]
+
+        try:
+            response = results[1][select]
+        except Exception:
+            response = ""
+
+        print(response)
+        if response == "":
+            return False, response
+        else:
+            return True, response
+    except ConnectionError:
+        return False, "Database Connecttion Error"

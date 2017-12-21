@@ -1,4 +1,4 @@
-from RESTAPI.ChatBotLibrary import TestChatBot
+from RESTAPI.ChatBotLibrary import ChatBot
 
 
 class ChatBotResponse:
@@ -6,5 +6,5 @@ class ChatBotResponse:
         pass
 
     def BotResponse(self, text):
-        result = TestChatBot.response(text)
+        result = ChatBot.response(text)
         return result

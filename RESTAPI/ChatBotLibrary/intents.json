@@ -95,6 +95,21 @@
       "tag": "Chairman",
       "patterns": [ "M. Anis Ud Dowla"],
       "responses": [ "Chairman, ACI Group" ]
+    },
+    {
+      "tag": "MD Name",
+      "patterns": [ "MD", "MD of aci group", "managing director", "Name of the managing director of ACI group", "Name of the md of ACI group"],
+      "responses": [ "Dr. Arif Dowla, managing director, ACI Group" ]
+    },
+    {
+      "tag": "MD",
+      "patterns": [ "Dr. Arif Dowla"],
+      "responses": [ "Managing Director, ACI Group" ]
+    },
+    {
+      "tag": "Industry",
+      "patterns": [ "Industries of ACI Group", "What are the industries of ACI Group"],
+      "responses": [ "chemicals, foods, pharma, consumer products, logistics, consumer electronics, automobile services, communication" ]
     }
 
 
