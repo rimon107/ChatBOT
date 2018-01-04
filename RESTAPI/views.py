@@ -90,6 +90,12 @@ def GetResponseResult(request):
             else:
                 message = ChatBot.response(query)
 
+        if message is None:
+            message = ""
+        else:
+            if type(message) == list:
+                message = message[0]
+
         status = "success"
         print(message)
         print(status)

@@ -1,5 +1,6 @@
 # things we need for NLP
 import nltk
+import pymssql
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 
@@ -29,14 +30,57 @@ import os
 
 trainingDatafileName = 'intents.json'
 
-path = os.getcwd() + '\\RESTAPI\\ChatBotLibrary\\'
+path = os.getcwd() + '\\'
 
 intentFile = path + trainingDatafileName
 
+# with open(intentFile) as json_data:
+#     intents = json.load(json_data)
+#     print("intents")
+#     print(intents)
+
 with open(intentFile) as json_data:
-    intents = json.load(json_data)
+    # intents = json.load(json_data)
     print("intents")
-    print(intents)
+    # print(intents)
+    conn = pymssql.connect(host='192.168.100.61', user='sa', password='dataport', database='ChatBot')
+    cursor = conn.cursor()
+
+    sql ="SELECT \
+      tag \
+      ,[patterns] \
+      ,[responses] \
+  FROM [ChatBot].[dbo].[xxx]"
+
+
+    cursor.execute(sql)
+
+    dataset = cursor.fetchall()
+
+    columns = [col[0] for col in cursor.description]
+
+    results = [
+        dict(zip(columns, row))
+        for row in dataset
+    ]
+
+    intnt = {
+        'intents' : []
+    }
+
+    for res in results:
+        intentDict = {
+            "tag": res['tag'],
+            "patterns": [res['patterns']],
+            "responses": [res['responses']]
+        }
+
+        intnt["intents"].append(intentDict)
+
+
+    intents = intnt
+
+
 
 words = []
 classes = []
@@ -61,10 +105,10 @@ words = sorted(list(set(words)))
 
 # remove duplicates
 classes = sorted(list(set(classes)))
-
-print (len(documents), "documents")
-print (len(classes), "classes", classes)
-print (len(words), "unique stemmed words", words)
+#
+# print (len(documents), "documents")
+# print (len(classes), "classes", classes)
+# print (len(words), "unique stemmed words", words)
 
 
 
@@ -123,10 +167,14 @@ tfModelFileName = 'model.tflearn'
 
 tfModelFile = path + tfModelFileName
 
+
+
 # Define model and setup tensorboard
 model = tflearn.DNN(net, tensorboard_dir=modelFile)
+#model.load(tfModelFile)
+
 # Start training (apply gradient descent algorithm)
-model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
+model.fit(train_x, train_y, n_epoch=150, batch_size=8, show_metric=True)
 model.save(tfModelFile)
 
 trainingDatafileName = 'training_data'

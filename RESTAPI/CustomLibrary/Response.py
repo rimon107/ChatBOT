@@ -8,3 +8,4 @@ class ChatBotResponse:
     def BotResponse(self, text):
         result = ChatBot.response(text)
         return result
+

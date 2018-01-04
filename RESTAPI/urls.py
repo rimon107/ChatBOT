@@ -1,5 +1,5 @@
-from django.conf.urls import url, include
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.conf.urls import url
+
 from .views import *
 
 urlpatterns = {
@@ -8,5 +8,3 @@ urlpatterns = {
 
 
 }
-
-urlpatterns = format_suffix_patterns(urlpatterns)

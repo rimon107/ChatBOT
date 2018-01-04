@@ -1,119 +1,93 @@
 {
   "intents": [
-    {
-      "tag": "greeting",
-      "patterns": [ "Hi", "Is anyone there?", "Hello", "Good day" ],
-      "responses": [ "Hello, thanks for visiting", "Good to see you again", "Hi there, how can I help?" ]
-
-    },
-    {
-      "tag": "goodbye",
-      "patterns": [ "Bye", "See you later", "Goodbye" ],
-      "responses": [ "See you later, thanks for visiting", "Have a nice day", "Bye! Come back again soon." ]
-    },
-    {
-      "tag": "thanks",
-      "patterns": [ "Thanks", "Thank you", "That's helpful" ],
-      "responses": [ "Happy to help!", "Any time!", "My pleasure" ]
-    },
-    {
-      "tag": "morning",
-      "patterns": [ "Good morning" ],
-      "responses": [ "Good Morning Sir ! How can I help you?" ]
-    },
-    {
-      "tag": "afternoon",
-      "patterns": [ "Good afternoon" ],
-      "responses": [ "Good afternoon Sir ! What can I assist you with? " ]
-    },
-    {
-      "tag": "evening",
-      "patterns": [ "Good evening" ],
-      "responses": [ "Good evening Sir ! How can I help you?" ]
-    },
-    {
-      "tag": "Abbreviation",
-      "patterns": [ "What does ACI stand for", "ACI Meaning", "ACI" ],
-      "responses": [ "Advanced Chemical Industries" ]
-    },
-    {
-      "tag": "Establishment",
-      "patterns": [ "When was ACI established" ],
-      "responses": [ "1968" ]
-    },
-    {
-      "tag": "Mission",
-      "patterns": [ "What mission does ACI have", "ACI mission" ],
-      "responses": [ "ACI's Mission is to enrich the quality of life of the people through responsible application of knowledge, technology and skills" ]
-    },
-    {
-      "tag": "Location",
-      "patterns": [ "Where is ACI head office located", "ACI location", "ACI head office location" ],
-      "responses": [ "ACI Centre 245, Tejgaon Industrial Area, Dhaka-1208, Bangladesh" ]
-    },
-    {
-      "tag": "Business units",
-      "patterns": [ "Name the major business units of ACI", "ACI major business" ],
-      "responses": [ "Agribusiness, Pharma, Consumer Brands & Logistics (Shwapno)" ]
-    },
-    {
-      "tag": "Core values",
-      "patterns": [ "What are the core values of ACI", "ACI core values " ],
-      "responses": [ "· Quality · Customer Focus· Innovation · Fairness· Transparency· Continuous Improvement" ]
-    },
-    {
-      "tag": "Policies",
-      "patterns": [ "Mention the policies followed by ACI", "ACI policy" ],
-      "responses": [ "Quality Policy: ISO 9001 Quality Management System.  (ACI is the first company in Bangladesh to have obtained ISO 9001 Certification for Quality Management System across all categories.) Safety, Health and Environment (SHE) Policy: ISO 14001 Environmental Management System. (ACI is the first company in Bangladesh to have obtained ISO 14001 Certification for Environmental Management System)" ]
-    },
-    {
-      "tag": "Initiative",
-      "patterns": [ "What recent move has been taken by ACI", "ACI recent moves" ],
-      "responses": [ "ACI Formulations Ltd. have set up their ETP at Gazipur" ]
-    },
-    {
-      "tag": "Research & Development",
-      "patterns": [ "What footprint does ACI have in the field of Research & Development", "ACI R&D", "ACI Research & Development" ],
-      "responses": [ "Popularization of Mechanical Rice Transplantation, Research & Development on Molecular Breeding Under ASRBC, Promoting climate smart agriculture in the coastal belt of Bangladesh" ]
-    },
-    {
-      "tag": "Uniqueness",
-      "patterns": [ "What sets this company apart from its competitors"],
-      "responses": [ "The achievements of ACI sets its’ uniqueness from the rest.Such as: ICAB has awarded ACI Limited for Best Presented Annual Reports–2016,ACI Crop Care wins Agrow Award 2017" ]
-    },
-    {
-      "tag": "Previous Name",
-      "patterns": [ "What was the previous name of ACI", "ACI previous name"],
-      "responses": [ "Imperial Chemical Industries (ICI)" ]
-    },
-    {
-      "tag": "Chairman Name",
-      "patterns": [ "Name of the Chairman of ACI group", "ACI Chairman","who is Chairman of ACI group"],
-      "responses": [ "M. Anis Ud Dowla, Chairman, ACI Group" ]
-    },
-    {
-      "tag": "Chairman",
-      "patterns": [ "M. Anis Ud Dowla"],
-      "responses": [ "Chairman, ACI Group" ]
-    },
-    {
-      "tag": "MD Name",
-      "patterns": [ "MD", "MD of aci group", "managing director", "Name of the managing director of ACI group", "Name of the md of ACI group"],
-      "responses": [ "Dr. Arif Dowla, managing director, ACI Group" ]
-    },
-    {
-      "tag": "MD",
-      "patterns": [ "Dr. Arif Dowla"],
-      "responses": [ "Managing Director, ACI Group" ]
-    },
-    {
-      "tag": "Industry",
-      "patterns": [ "Industries of ACI Group", "What are the industries of ACI Group"],
-      "responses": [ "chemicals, foods, pharma, consumer products, logistics, consumer electronics, automobile services, communication" ]
-    }
-
-
-
-  ]
+        {"tag": "greeting",
+         "patterns": ["Hi", "How are you", "Is anyone there?", "Hello", "Good day"],
+         "responses": ["Hello, thanks for visiting", "Good to see you again", "Hi there, how can I help?"],
+         "context_set": ""
+        },
+        {"tag": "goodbye",
+         "patterns": ["Bye", "See you later", "Goodbye"],
+         "responses": ["See you later, thanks for visiting", "Have a nice day", "Bye! Come back again soon."]
+        },
+        {"tag": "thanks",
+         "patterns": ["Thanks", "Thank you", "That's helpful"],
+         "responses": ["Happy to help!", "Any time!", "My pleasure"]
+        },
+        {"tag": "hours",
+         "patterns": ["What hours are you open?", "What are your hours?", "When are you open?" ],
+         "responses": ["We're open every day 9am-9pm", "Our hours are 9am-9pm every day"]
+        },
+        {"tag": "mopeds",
+         "patterns": ["Which mopeds do you have?", "What kinds of mopeds are there?", "What do you rent?" ],
+         "responses": ["We rent Yamaha, Piaggio and Vespa mopeds", "We have Piaggio, Vespa and Yamaha mopeds"]
+        },
+        {"tag": "payments",
+         "patterns": ["Do you take credit cards?", "Do you accept Mastercard?", "Are you cash only?" ],
+         "responses": ["We accept VISA, Mastercard and AMEX", "We accept most major credit cards"]
+        },
+        {"tag": "opentoday",
+         "patterns": ["Are you open today?", "When do you open today?", "What are your hours today?"],
+         "responses": ["We're open every day from 9am-9pm", "Our hours are 9am-9pm every day"]
+        },
+        {"tag": "rental",
+         "patterns": ["Can we rent a moped?", "I'd like to rent a moped", "How does this work?" ],
+         "responses": ["Are you looking to rent today or later this week?"],
+         "context_set": "rentalday"
+        },
+        {"tag": "today",
+         "patterns": ["today"],
+         "responses": ["For rentals today please call 1-800-MYMOPED", "Same-day rentals please call 1-800-MYMOPED"],
+         "context_filter": "rentalday"
+        },
+        {
+         "tag": "StaffId502",
+          "patterns": [ "My Staff Id is 502", "502"],
+         "responses": [ "Employee Name:  Md. Abul Kalam Azad. Joined ACI on 1994-07-23. Designation: Asst. Manager, Ndds. Department: Pharma Marketing. Blood group: O+. Birthdate: February 1" ]
+        },
+        {
+         "tag": "StaffId656",
+          "patterns": [ "My Staff Id is 656", "656"],
+         "responses": [ "Employee Name:  Akther Hossain. Joined ACI on 1996-02-01. Designation: Corporate Reporting Manager. Department: Finance & Planning. Blood group: O+. Birthdate: January 1" ]
+        },
+        {
+         "tag": "StaffId427",
+          "patterns": [ "My Staff Id is 427", "427"],
+         "responses": [ "Employee Name:  Md. Fakhrul Islam. Joined ACI on 1993-08-01. Designation: Market Research & Development Executive. Department: Pharma MR & A. Blood group: B+. Birthdate: March 31" ]
+        },
+        {
+         "tag": "StaffId271",
+          "patterns": [ "My Staff Id is 271", "271"],
+         "responses": [ "Employee Name:  A Z M LUTFOR RAHMAN. Joined ACI on 1986-11-09. Designation: Distribution Cadet. Department: Distribution. Blood group: N/A. Birthdate: January 1" ]
+        },
+        {
+         "tag": "StaffId549",
+          "patterns": [ "My Staff Id is 549", "549"],
+         "responses": [ "Employee Name:  Ananda Gopal Dey. Joined ACI on 1994-12-14. Designation: General Manager, Estate & Legal Affairs. Department: Estate & Legal Affairs. Blood group: O+. Birthdate: March 10" ]
+        },
+        {
+         "tag": "StaffId247",
+          "patterns": [ "My Staff Id is 247", "247"],
+         "responses": [ "Employee Name:  Samadul Hoque Sikder. Joined ACI on 1985-04-01. Designation: Senior Coordination Officer. Department: Corporate. Blood group: O+. Birthdate: February 1" ]
+        },
+        {
+         "tag": "StaffId281",
+          "patterns": [ "My Staff Id is 281", "281"],
+         "responses": [ "Employee Name:  M Anis Ud Dowla. Joined ACI on 1987-07-01. Designation: Chairman. Department: Corporate. Blood group: B+. Birthdate: March 1" ]
+        },
+        {
+         "tag": "StaffId566",
+          "patterns": [ "My Staff Id is 566", "566"],
+         "responses": [ "Employee Name:  SYED NURUL KABIR. Joined ACI on 1995-02-01. Designation: Senior Depot Manager. Department: Distribution. Blood group: . Birthdate: November 2" ]
+        },
+        {
+         "tag": "StaffId403",
+          "patterns": [ "My Staff Id is 403"],
+         "responses": [ "Employee Name:  MD. SHAFIQUR RAHMAN. Joined ACI on 1993-01-09. Designation: Senior Depot Manager. Department: Distribution. Blood group: B+. Birthdate: November 17" ]
+        },
+        {
+         "tag": "StaffId454",
+          "patterns": [ "My Staff Id is 454, I am working In ACI", "454"],
+         "responses": [ "Employee Name:  MD. MINTU MIAH. Joined ACI on 1993-12-19. Designation: Sr. Boiler Attendant. Department: Pharma Engineering. Blood group: . Birthdate: January 1" ]
+        }
+   ]
 }
-

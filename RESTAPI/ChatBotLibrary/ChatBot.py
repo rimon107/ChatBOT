@@ -13,6 +13,15 @@ import pickle
 import os
 import pymssql
 
+
+def dictfetchall(cur):
+    dataset = cur.fetchall()
+    columns = [col[0] for col in cur.description]
+    return [
+        dict(zip(columns, row))
+        for row in dataset
+        ]
+
 trainingDatafileName = 'training_data'
 
 path = os.getcwd() + '\\RESTAPI\\ChatBotLibrary\\'
@@ -42,7 +51,46 @@ model = tflearn.DNN(net, tensorboard_dir=logFolder)
 jsonFileName = 'intents.json'
 file = path + jsonFileName
 with open(file) as json_data:
-    intents = json.load(json_data)
+    # intents = json.load(json_data)
+    # print("intents")
+    # print(intents)
+    conn = pymssql.connect(host='192.168.100.61', user='sa', password='dataport', database='ChatBot')
+    cursor = conn.cursor()
+
+    sql = "SELECT  \
+          tag \
+          ,[patterns] \
+          ,[responses] \
+      FROM [ChatBot].[dbo].[xxx]"
+
+    cursor.execute(sql)
+
+    dataset = cursor.fetchall()
+
+    columns = [col[0] for col in cursor.description]
+
+    results = [
+        dict(zip(columns, row))
+        for row in dataset
+    ]
+
+    intnt = {
+        'intents': []
+    }
+
+    for res in results:
+        # intentDict['patterns'].append(res['patterns'])
+        # intentDict['responses'].append(res['responses'])
+
+        intentDict = {
+            "tag": res['tag'],
+            "patterns": [res['patterns']],
+            "responses": [res['responses']]
+        }
+
+        intnt["intents"].append(intentDict)
+
+    intents = intnt
 
 # load our saved model
 file = path + 'model.tflearn'
@@ -59,6 +107,7 @@ def clean_up_sentence(sentence):
 
 # return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
 def bow(sentence, words, show_details=False):
+    flag = False
     # tokenize the pattern
     sentence_words = clean_up_sentence(sentence)
     # bag of words
@@ -67,30 +116,37 @@ def bow(sentence, words, show_details=False):
         for i, w in enumerate(words):
             if w == s:
                 bag[i] = 1
+
                 if show_details:
                     print("found in bag: %s" % w)
+                # flag = True
+                # break
+        # if flag== True:
+        #     break
 
     return (np.array(bag))
 
 
 def GetResultFromDatabase(text):
-    conn = pymssql.connect(host='192.168.100.139', user='sa', password='dataport', database='Sentiment')
+    conn = pymssql.connect(host='192.168.100.61', user='sa', password='dataport', database='ChatBot')
     cursor = conn.cursor()
     sql = "SELECT  [responses] \
             FROM [dbo].[TXTBOT] \
-            WHERE patterns = '" + text + "'"
-    cursor.execute(sql)
-
-    dataset = cursor.fetchall()
-
-    columns = [col[0] for col in cursor.description]
-
-    results = [
-        dict(zip(columns, row))
-        for row in dataset
-    ]
+            WHERE patterns = '" + str(text) + "'"
 
     try:
+        cursor.execute(sql)
+
+        dataset = cursor.fetchall()
+
+        columns = [col[0] for col in cursor.description]
+
+        results = [
+            dict(zip(columns, row))
+            for row in dataset
+        ]
+
+
         response = results[0]['responses']
     except Exception:
         response = ""
@@ -103,14 +159,18 @@ def GetResultFromDatabase(text):
 
 context = {}
 
-ERROR_THRESHOLD = 0.25
+# ERROR_THRESHOLD = 0.25
 
+ERROR_THRESHOLD = 0.01
 
 def classify(sentence):
     # generate probabilities from the model
-    results = model.predict([bow(sentence, words)])[0]
+    res = [bow(sentence, words)]
+    resultList = model.predict(res)
+    results = resultList[0]
     # filter out predictions below a threshold
     results = [[i, r] for i, r in enumerate(results) if r > ERROR_THRESHOLD]
+    # results = [[i, r] for i, r in enumerate(results) ]
     # sort by strength of probability
     results.sort(key=lambda x: x[1], reverse=True)
     return_list = []
@@ -121,7 +181,9 @@ def classify(sentence):
 
 
 def response(sentence, userID='123', show_details=False):
-    status, response = GetResultFromDatabase(sentence)
+    #status, response = GetResultFromDatabase(sentence)
+
+    status = False
 
     if status == False:
         results = classify(sentence)
@@ -131,6 +193,7 @@ def response(sentence, userID='123', show_details=False):
             while results:
                 for i in intents['intents']:
                     # find a tag matching the first result
+
                     if i['tag'] == results[0][0]:
                         # set context for this intent if necessary
                         if 'context_set' in i:
@@ -141,9 +204,10 @@ def response(sentence, userID='123', show_details=False):
                         if not 'context_filter' in i or \
                                 (userID in context and 'context_filter' in i and i['context_filter'] == context[
                                     userID]):
-                            if show_details: print('tag:', i['tag'])
+                            if show_details:
+                                print('tag:', i['tag'])
                             # a random response from the intent
-                            return random.choice(i['responses'])
+                            return i['responses']
 
                 results.pop(0)
     else:
