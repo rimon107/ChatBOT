@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'bot_rest_api/', include('RESTAPI.urls'))
+    url(r'BotApi/', include('RESTAPI.urls'))
 ]

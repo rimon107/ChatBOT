@@ -4,7 +4,7 @@ from .views import *
 
 urlpatterns = {
 
-    url(r'^get_response$', GetResponseResult, name="query"),
+    url(r'^Result$', GetResponseResult, name="query"),
 
 
 }

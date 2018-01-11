@@ -50,7 +50,7 @@ with open(intentFile) as json_data:
       tag \
       ,[patterns] \
       ,[responses] \
-  FROM [ChatBot].[dbo].[xxx]"
+  FROM [ChatBot].[dbo].[TrainChatBot]"
 
 
     cursor.execute(sql)
@@ -152,6 +152,7 @@ train_y = list(training[:,1])
 
 # reset underlying graph data
 tf.reset_default_graph()
+
 # Build neural network
 net = tflearn.input_data(shape=[None, len(train_x[0])])
 net = tflearn.fully_connected(net, 8)
@@ -170,11 +171,11 @@ tfModelFile = path + tfModelFileName
 
 
 # Define model and setup tensorboard
-model = tflearn.DNN(net, tensorboard_dir=modelFile)
-#model.load(tfModelFile)
+model = tflearn.DNN(net, tensorboard_verbose=3, tensorboard_dir=modelFile)
+model.load(tfModelFile)
 
 # Start training (apply gradient descent algorithm)
-model.fit(train_x, train_y, n_epoch=150, batch_size=8, show_metric=True)
+model.fit(train_x, train_y, n_epoch=1000, batch_size=8, show_metric=True)
 model.save(tfModelFile)
 
 trainingDatafileName = 'training_data'

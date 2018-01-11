@@ -44,7 +44,7 @@ net = tflearn.regression(net)
 
 logFolder = path + 'tflearn_logs'
 # Define model and setup tensorboard
-model = tflearn.DNN(net, tensorboard_dir=logFolder)
+model = tflearn.DNN(net, tensorboard_verbose=3, tensorboard_dir=logFolder)
 
 # import our chat-bot intents file
 
@@ -61,7 +61,7 @@ with open(file) as json_data:
           tag \
           ,[patterns] \
           ,[responses] \
-      FROM [ChatBot].[dbo].[xxx]"
+      FROM [ChatBot].[dbo].[TrainChatBot]"
 
     cursor.execute(sql)
 
@@ -131,8 +131,8 @@ def GetResultFromDatabase(text):
     conn = pymssql.connect(host='192.168.100.61', user='sa', password='dataport', database='ChatBot')
     cursor = conn.cursor()
     sql = "SELECT  [responses] \
-            FROM [dbo].[TXTBOT] \
-            WHERE patterns = '" + str(text) + "'"
+            FROM [dbo].[TrainChatBot] \
+            WHERE patterns like '%%" + str(text) + "%%'"
 
     try:
         cursor.execute(sql)
@@ -161,7 +161,7 @@ context = {}
 
 # ERROR_THRESHOLD = 0.25
 
-ERROR_THRESHOLD = 0.01
+ERROR_THRESHOLD = 0.25
 
 def classify(sentence):
     # generate probabilities from the model
@@ -172,7 +172,7 @@ def classify(sentence):
     results = [[i, r] for i, r in enumerate(results) if r > ERROR_THRESHOLD]
     # results = [[i, r] for i, r in enumerate(results) ]
     # sort by strength of probability
-    results.sort(key=lambda x: x[1], reverse=True)
+    # results.sort(key=lambda x: x[1], reverse=True)
     return_list = []
     for r in results:
         return_list.append((classes[r[0]], r[1]))
@@ -181,9 +181,9 @@ def classify(sentence):
 
 
 def response(sentence, userID='123', show_details=False):
-    #status, response = GetResultFromDatabase(sentence)
+    status, response = GetResultFromDatabase(sentence)
 
-    status = False
+    #status = False
 
     if status == False:
         results = classify(sentence)

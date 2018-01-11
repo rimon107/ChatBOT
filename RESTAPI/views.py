@@ -91,7 +91,7 @@ def GetResponseResult(request):
                 message = ChatBot.response(query)
 
         if message is None:
-            message = ""
+            message = "No Result Found"
         else:
             if type(message) == list:
                 message = message[0]
